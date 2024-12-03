@@ -1,48 +1,55 @@
+use std::cmp::{max, min};
 use crate::common;
+
 
 pub fn result() {
     let mut contents = common::read_content_from_file("d2_p1__input.txt");
     let lines = contents.lines().collect::<Vec<&str>>();
     let mut numbers: Vec<i32> = Vec::new();
-    let mut conditions: [bool; 3] = [false, false, false];
     let mut safe_reports = 0;
 
     // For each &str line ("<number> <number>"): split, parse as i32 and collects as a pair (Vec<i32>)
     for line in &lines {
-         numbers = line
+        numbers = line
             .split(" ")
             .map(|x| x.parse::<i32>().unwrap())
             .collect::<Vec<i32>>();
 
-        // 1° Law: the levels are either all increasing or all decreasing;
-        let lone = law_one(&numbers);
-        // 2° Law: any two adjacent levels differ by at least one and at most three (1<=diff=>3)
-        let ltwo = law_two(&numbers);
-        conditions = <[bool; 3]>::try_from([&lone[..], &ltwo[..]].concat().as_slice()).unwrap();
+        let mut sub_numbers: Vec<Vec<i32>> = Vec::new();
+        for i in 0..numbers.len() {
+            let mut sub: Vec<i32> = Vec::from(&numbers[..i]);
+            sub.append(&mut Vec::from(&numbers[i + 1..]));
+            sub_numbers.push(sub);
+        };
 
-        safe_reports += if (conditions[0] || conditions[1]) && conditions[2] {
-            1
-        } else {
-            0
+        if is_valid(&numbers) || sub_numbers.iter().any(|vec| is_valid(&vec)) {
+            safe_reports += 1
         }
     }
 
-    println!("D2:: Safe reports: {safe_reports}/{}", lines.len());
+    println!("Safe reports: {}", safe_reports);
 }
 
-fn law_one(numbers: &Vec<i32>) -> [bool; 2] {
-    let mut conditions: [bool; 2] = [false, false];
+fn is_valid(numbers: &Vec<i32>) -> bool {
+    let mut numbers_copy = numbers.clone();
+    let conditions = [
+        numbers_copy.windows(2).all(|w| w[0] > w[1]), // All DESC
+        numbers_copy.windows(2).all(|w| w[0] < w[1])  // All ASC
+    ];
 
-    conditions[0] = numbers.windows(2).all(|w| w[0] >= w[1]);
-    conditions[1] = numbers.windows(2).all(|w| w[0] <= w[1]);
+    let mut valid = conditions[0] || conditions[1];
 
-    conditions
-}
+    if valid {
+        numbers_copy.sort();
+        for window in numbers_copy.windows(2) {
+            if let &[a, b] = window {
+                if b - a > 3 || b - a < 1 {
+                    valid = false;
+                    break;
+                }
+            }
+        }
+    }
 
-fn law_two(numbers: &Vec<i32>) -> [bool; 1] {
-    [numbers.windows(2).all(|w| {
-        let difference = (w[0] - w[1]).abs();
-
-        difference >= 1 && difference <= 3
-    })]
+    valid
 }
