@@ -1,4 +1,3 @@
-use std::fs::canonicalize;
 use crate::common;
 use regex::Regex;
 
