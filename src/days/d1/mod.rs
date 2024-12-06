@@ -36,7 +36,7 @@ fn part2 () {
         score += sx * repetitions as i32
     }
 
-    println!("D1 (part 2):: {:?}", score);
+    println!("D1 (part 2)  :: {:?}", score);
 }
 
 pub fn result() {
@@ -49,7 +49,7 @@ pub fn result() {
         counter += 1;
     }
 
-    println!("D1 (part 1):: Total distance: {}", total_distance);
+    println!("D1 (part 1)  :: Total distance: {}", total_distance);
 
     part2();
 }

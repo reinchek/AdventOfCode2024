@@ -33,5 +33,5 @@ pub fn result() {
         }
     });
 
-    println!("Total: {}", total);
+    println!("D3 (complete):: Total: {}", total);
 }

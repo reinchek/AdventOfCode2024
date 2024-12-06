@@ -27,7 +27,7 @@ pub fn result() {
         }
     }
 
-    println!("Safe reports: {}", safe_reports);
+    println!("D2 (complete):: Safe reports: {}", safe_reports);
 }
 
 fn is_valid(numbers: &Vec<i32>) -> bool {
